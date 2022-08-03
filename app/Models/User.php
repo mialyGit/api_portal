@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Models\Type_user;
+use App\Models\Historique;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -59,5 +60,15 @@ class User extends Authenticatable
     public function type_user(): BelongsTo
     {
         return $this->belongsTo(Type_user::class);
+    }
+
+    /**
+     * Get all of the historiques for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function historiques(): HasMany
+    {
+        return $this->hasMany(Historique::class);
     }
 }
