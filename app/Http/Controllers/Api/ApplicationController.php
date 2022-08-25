@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Application;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 
 class ApplicationController extends Controller
 {
@@ -37,7 +38,32 @@ class ApplicationController extends Controller
      */
     public function store(Request $request)
     {
-        return Application::create($request->all());
+        $fields = $request->validate([
+            'code_app' => 'required | string | unique:applications,code_app',
+            'nom_app' => 'required | string ',
+            'desc_app' => 'nullable | string ',
+            'abrev_app' => 'nullable | string ',
+            'lien_app' => 'required | string ',
+            'file' => ' nullable | image | mimes:jpeg,jpg,png,PNG | max:2048'
+        ]);
+
+        $fields['logo_app'] = "logo/default-logo.png";
+
+        if($file = $request->file('file')){
+            // $name = $file->getClientOriginalName();
+            $ext = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
+            $name = strtolower($fields['nom_app'].'_'.$fields['code_app']).'.'. $ext;
+            $path = $request->file('file')->storeAs('logo', $name, 'public');
+            $fields['logo_app'] = $path;
+        }
+
+        unset($fields['file']);
+
+        $app = Application::create($fields);
+
+        return response($app, 201);
+
+
     }
 
     /**
@@ -71,7 +97,38 @@ class ApplicationController extends Controller
      */
     public function update(Request $request, Application $application)
     {
-        //
+        $fields = $request->validate([
+            'code_app' => 'required | string | unique:applications,code_app,' . $application->id,
+            'nom_app' => 'required | string ',
+            'desc_app' => 'nullable | string ',
+            'abrev_app' => 'nullable | string ',
+            'logo_app' => 'nullable | string',
+            'lien_app' => 'required | string ',
+            'file' => ' nullable | image | mimes:jpeg,jpg,png,PNG | max:2048'
+        ]);
+
+        // $fields['logo_app'] = "default-logo.png";
+
+        if($file = $request->file('file')){
+            // $name = $file->getClientOriginalName();
+            $ext = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
+            $name = strtolower($fields['nom_app'].'_'.$fields['code_app']).'.'. $ext;
+            if($fields['logo_app'] !=    'logo/'.$name){
+                $imagePath = public_path("storage/" . $fields['logo_app']);
+                if(File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+                $path = $request->file('file')->storeAs('logo', $name, 'public');
+                $fields['logo_app'] = $path;
+            }
+        }
+
+        unset($fields['file']);
+
+        $app = $application->update($fields);
+
+        return response($app, 201);
+
     }
 
     /**
@@ -82,7 +139,15 @@ class ApplicationController extends Controller
      */
     public function destroy(Application $application)
     {
-        //
+        if($application->logo_app != "logo/default-logo.png"){
+            $imagePath = public_path("storage/" . $application->logo_app);
+            if(File::exists($imagePath)) {
+                File::delete($imagePath);
+            }
+        }
+        $application->delete();
+        $response = ['message' => 'Application supprimée de la base de données'];
+        return response($response,201);
     }
 
     public function destroy_all()

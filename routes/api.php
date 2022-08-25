@@ -20,8 +20,12 @@ use App\Http\Controllers\Api\UserPrivilegeAppController;
 */
 Route::post('users/register', [UserController::class, 'register']);
 Route::post('users/login', [UserController::class, 'login']);
+
 Route::get('users', [UserController::class, 'index']);
+Route::put('users/{user}', [UserController::class, 'update']);
+Route::delete('users/{user}', [UserController::class, 'destroy']);
 Route::delete('users_all', [UserController::class, 'destroy_all']);
+// Route::post('upload', [UserController::class, 'upload_img_url']);
 
 Route::resource('applications', ApplicationController::class);
 Route::delete('applications_all', [ApplicationController::class, 'destroy_all']);
@@ -35,8 +39,8 @@ Route::delete('user_privilege_apps_all', [UserPrivilegeAppController::class, 'de
 Route::resource('type_users', TypeUserController::class);
 Route::delete('type_users_all', [TypeUserController::class, 'destroy_all']);
 
-Route::middleware('auth:sanctum')->group(function () {
+/*Route::middleware('auth:sanctum')->group(function () {
     Route::put('users/{id}', [UserController::class, 'update']);
     Route::delete('users/{id}', [UserController::class, 'destroy']);
     Route::post('users/logout', [UserController::class, 'logout']);
-});
+});*/

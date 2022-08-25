@@ -15,7 +15,7 @@ class UserPrivilegeAppController extends Controller
      */
     public function index()
     {
-        //
+        return UserPrivilegeApp::all();
     }
 
     /**

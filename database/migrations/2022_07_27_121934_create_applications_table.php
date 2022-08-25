@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('code_app');
             $table->string('nom_app');
-            $table->string('abrev_app');
-            $table->text('desc_app');
+            $table->string('abrev_app')->nullable();
+            $table->text('desc_app')->nullable();
             $table->text('lien_app');
             $table->string('logo_app');
             $table->timestamps();
@@ -32,6 +32,12 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::table('user_privilege_apps', function (Blueprint $table) {
+            $table->dropForeign('user_privilege_apps_application_id_foreign');
+            $table->dropColumn('application_id');
+        });
+
         Schema::dropIfExists('applications');
+
     }
 };

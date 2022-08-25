@@ -30,21 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('user_privilege_apps', function (Blueprint $table) {
-            $table->dropForeign('user_privilege_apps_user_id_foreign');
-            $table->dropColumn('user_id');
-        });
-        
-        Schema::table('user_privilege_apps', function (Blueprint $table) {
-            $table->dropForeign('user_privilege_apps_privilege_id_foreign');
-            $table->dropColumn('privilege_id');
-        });
-
-        Schema::table('user_privilege_apps', function (Blueprint $table) {
-            $table->dropForeign('user_privilege_apps_application_id_foreign');
-            $table->dropColumn('application_id');
-        });
-
         Schema::dropIfExists('user_privilege_apps');
     }
 };
