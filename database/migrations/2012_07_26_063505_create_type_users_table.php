@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('type_users', function (Blueprint $table) {
             $table->id();
-            $table->string('libelle_type');
+            $table->string('libelle_type',50);
             $table->timestamps();
         });
     }
@@ -27,10 +27,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
+        /*Schema::table('users', function (Blueprint $table) {
             $table->dropForeign('users_type_user_id_foreign');
             $table->dropColumn('type_user_id');
-        });
+        });*/
         
         Schema::dropIfExists('type_users');
     }

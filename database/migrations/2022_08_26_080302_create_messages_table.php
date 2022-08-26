@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_privilege_apps', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('sender_id');
+            $table->bigInteger('rec_id');
+            $table->text('content');
             $table->timestamps();
-
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('application_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('privilege_id')->constrained()->cascadeOnDelete();
-            $table->unique(['user_id', 'application_id', 'privilege_id']);
+            
+            $table->foreign('sender_id')->nullable()->references('id')->on('users');
+            $table->foreign('rec_id')->nullable()->references('id')->on('users');
         });
     }
 
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_privilege_apps');
+        Schema::dropIfExists('messages');
     }
 };

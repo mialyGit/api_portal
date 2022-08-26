@@ -48,7 +48,7 @@ class TypeUserController extends Controller
      */
     public function show(Type_user $type_user)
     {
-        //
+        return $type_user->users;
     }
 
     /**

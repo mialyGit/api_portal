@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('privileges', function (Blueprint $table) {
             $table->id();
-            $table->string('nom_privilege');
+            $table->string('nom_privilege',50);
             $table->timestamps();
         });
     }
@@ -27,10 +27,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('user_privilege_apps', function (Blueprint $table) {
+        /*Schema::table('user_privilege_apps', function (Blueprint $table) {
             $table->dropForeign('user_privilege_apps_privilege_id_foreign');
             $table->dropColumn('privilege_id');
-        });
+        });*/
         
         Schema::dropIfExists('privileges');
     }

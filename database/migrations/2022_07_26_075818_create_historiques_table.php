@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('historiques', function (Blueprint $table) {
             $table->id();
-            $table->string('action');
+            $table->string('action', 50);
             $table->timestamps();
 
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained();
         });
     }
 
@@ -29,10 +29,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('historiques', function (Blueprint $table) {
+        /*Schema::table('historiques', function (Blueprint $table) {
             $table->dropForeign('historiques_user_id_foreign');
             $table->dropColumn('user_id');
-        });
+        });*/
 
         Schema::dropIfExists('historiques');
     }

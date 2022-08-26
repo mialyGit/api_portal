@@ -18,16 +18,22 @@ return new class extends Migration
             $table->string('nom');
             $table->string('prenom')->nullable();
             $table->string('email')->unique();
-            $table->json('cin')->nullable();
-            $table->string('telephone')->nullable();
-            $table->string('password')->nullable();
+            $table->json('cin')->default(json_encode([
+                'numero', 'date_delivrance', 'date_naissance', 'lieu_naissance', 'date_duplicata',
+                'lieu_duplicata', 'pere', 'mere'
+            ]));
+            $table->json('cin_upload')->nullable();
+            $table->string('telephone',20)->nullable();
+            $table->string('password');
             $table->string('photo')->nullable();
-            $table->string('adresse')->nullable();
+            $table->string('adresse');
+            $table->integer('status');
+            $table->boolean('online');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
 
-            $table->foreignId('type_user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('type_user_id')->nullable()->constrained();
         });
     }
 
@@ -38,10 +44,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('user_privilege_apps', function (Blueprint $table) {
+        /*Schema::table('user_privilege_apps', function (Blueprint $table) {
             $table->dropForeign('user_privilege_apps_user_id_foreign');
             $table->dropColumn('user_id');
-        });
+        });*/
         
         Schema::dropIfExists('users');
     }

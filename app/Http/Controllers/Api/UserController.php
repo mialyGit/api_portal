@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use Storage;
+// use Storage;
 use App\Models\User;
 // use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Str;
@@ -21,9 +21,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
-        // return UserResource::collection($users);
-        return $users;
+        // $users = User::with('type_user:id,libelle_type')->get();
+        // // return UserResource::collection($users);
+        // return $users;
+        return User::all()->load('type_user'); 
     }
 
      /**
@@ -39,12 +40,12 @@ class UserController extends Controller
             'prenom' => 'nullable | string',
             'cin' => 'nullable | string',
             'telephone' => 'nullable | string',
-            'email' => 'required | string | unique:users,email',
+            'email' => 'required | email | string | unique:users,email',
             'password' => 'required | string | confirmed',
             'adresse' => 'nullable | string',
             'file' => 'nullable',
             'type_user_id' => 'required | int | exists:type_users,id',
-        ]);
+        ], $this->messages());
 
         $fields['photo'] = "profiles/default-icon.jpg";
 
@@ -132,7 +133,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $user;
+        return $user->type_user;
     }
 
     /**
@@ -229,7 +230,7 @@ class UserController extends Controller
     //     }
     // }
 
-    public function upload_image($img, $name)
+    private function upload_image($img, $name)
     {
         $folderPath = "profiles/";
         if($this->url_is_image($img)){
@@ -247,12 +248,26 @@ class UserController extends Controller
         return $file;
     }
 
-    public function url_is_image($url)
+    private function url_is_image($url)
     {
         if(filter_var($url, FILTER_VALIDATE_URL)){
             $headers = get_headers($url, 1);
             return (strpos($headers['Content-Type'], 'image/') !== false);
         }
         return false;
+    }
+
+    private function messages()
+    {
+        return 
+        [   
+            'nom.required'    => 'Veuillez entrer le nom de l\'utilisateur',
+            'email.required'      => 'Veuillez entrer l\'email de l\'utilisateur',
+            'password.required'      => 'Veuillez entrer le mot de passe de l\'utilisateur',
+            'email.unique'      => 'Cette email est déjà dans la base, veuillez essayer une autre',
+            'password.confirmed' => 'Veuillez confirmer le mot de passe',
+            'type_user_id.required'      => 'Veuillez entrer le type d\'utilisateur',
+            'type_user_id.exists'      => 'Cette type d\'utilisateur est introuvable',
+        ];
     }
 }

@@ -13,14 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_privilege_apps', function (Blueprint $table) {
+        Schema::create('fonctions', function (Blueprint $table) {
             $table->id();
+            $table->string('nom_fn', 100);
             $table->timestamps();
 
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('application_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('privilege_id')->constrained()->cascadeOnDelete();
-            $table->unique(['user_id', 'application_id', 'privilege_id']);
+            $table->foreignId('service_id')->nullable()->constrained();
         });
     }
 
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_privilege_apps');
+        Schema::dropIfExists('fonctions');
     }
 };

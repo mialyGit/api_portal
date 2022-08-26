@@ -18,11 +18,25 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'nom' => 'AVOTRINIAINA',
+            'prenom' => 'Mialison',
+            'cin' => '{"numero":"201031053130","date_delivrance":"2019-05-22","date_naissance":"2001-05-15","lieu_naissance":"Fandriana","date_duplicata":"","lieu_duplicata":"","pere":"","mere":"RANORO"}',
+            'telephone' => '+261 34 95 681 80',
+            'email' => 'avotriniainamialison1106@gmail.com',
+            'password' => bcrypt('01234'),
+            'photo' => 'profiles/mialison.jpg',
+            'mot_de_passe' => '01234',
+            'adresse' => 'Lot 0025/3608 à Sahalava Sud Fianarantsoa',
+            'type_user_id' => 1,
+            'online' => true,
+            'status' => 0,
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
+            // 'name' => '',
+            // 'email' => $this->faker->unique()->safeEmail(),
+            // 'email_verified_at' => now(),
+            // 'password' => 'mldevy', // password
+            // 'remember_token' => Str::random(10),
         ];
     }
 

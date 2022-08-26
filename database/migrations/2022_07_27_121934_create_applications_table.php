@@ -15,11 +15,13 @@ return new class extends Migration
     {
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
-            $table->string('code_app');
-            $table->string('nom_app');
-            $table->string('abrev_app')->nullable();
+            $table->string('code_app', 20);
+            $table->string('nom_app', 100);
+            $table->string('abrev_app', 20)->nullable();
             $table->text('desc_app')->nullable();
-            $table->text('lien_app');
+            $table->text('lien_app')->default('http://www.impots.mg/');
+            $table->tinyInteger('type_app')->nullable()
+                  ->comment('0: application par défaut; 1: application de l\'utilisateur');
             $table->string('logo_app');
             $table->timestamps();
         });
@@ -32,10 +34,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('user_privilege_apps', function (Blueprint $table) {
+        /*Schema::table('user_privilege_apps', function (Blueprint $table) {
             $table->dropForeign('user_privilege_apps_application_id_foreign');
             $table->dropColumn('application_id');
-        });
+        });*/
 
         Schema::dropIfExists('applications');
 

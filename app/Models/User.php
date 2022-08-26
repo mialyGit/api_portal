@@ -8,6 +8,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -40,7 +41,16 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        // 'cin' => 'array'
+        'cin' => 'array'
+    ];
+
+    protected $attributes = [
+        'cin' => [
+            'numero','date_delivrance',
+            'date_naissance', 'lieu_naissance', 
+            'date_duplicata','lieu_duplicata',
+            'pere','mere'
+        ]
     ];
 
     /**
