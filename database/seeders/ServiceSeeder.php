@@ -15,13 +15,17 @@ class ServiceSeeder extends Seeder
      */
     public function run()
     {
+        // DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::table('services')->truncate();
+        // DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
         $data = json_decode(file_get_contents(storage_path() . "/app/json/direction.json"), true);
 
         foreach ($data as $row) {
             $abrev = $row['dir']['key'];
             $dir = DB::table('directions')->where('abrev_dir', $abrev)->first();
             foreach ($row['services'] as $value) {
-                if($value['ABREV'] == $abrev){
+                // if($value['ABREV'] == $abrev){
                     DB::table('services')->insert([
                         'code_sc' => $value['ID'],
                         'nom_sc' => $value['NOM'],
@@ -36,7 +40,7 @@ class ServiceSeeder extends Seeder
                         'updated_at' => date("Y-m-d H:i:s"),
                         'created_at' => date("Y-m-d H:i:s"),
                     ]);
-                }
+                // }
             }
         }
     }

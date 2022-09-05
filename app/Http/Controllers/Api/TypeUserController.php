@@ -15,8 +15,7 @@ class TypeUserController extends Controller
      */
     public function index()
     {
-        $type_users = Type_user::all();
-        return $type_users;
+        return Type_user::get(['id','libelle_type']);
     }
 
     /**

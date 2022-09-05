@@ -16,6 +16,8 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('users')->truncate();
+
         // \App\Models\User::factory()->create();
         DB::table('users')->insert([
             'nom' => 'AVOTRINIAINA',
@@ -28,8 +30,6 @@ class UserSeeder extends Seeder
             'mot_de_passe' => '01234',
             'adresse' => 'Lot 0025/3608 à Sahalava Sud Fianarantsoa',
             'type_user_id' => 1,
-            'online' => true,
-            'status' => 0,
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ]);

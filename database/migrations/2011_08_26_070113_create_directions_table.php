@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('code_dir', 10)->nullable()->unique();
             $table->string('nom_dir', 100);
-            $table->string('abrev_dir', 20)->nullable();
+            $table->string('abrev_dir', 100)->nullable();
             $table->timestamps();
         });
 

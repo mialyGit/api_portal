@@ -43,41 +43,28 @@ class UserController extends Controller
             'email' => 'required | email | string | unique:users,email',
             'password' => 'required | string | confirmed',
             'adresse' => 'nullable | string',
-            'file' => 'nullable',
             'type_user_id' => 'required | int | exists:type_users,id',
         ], $this->messages());
 
         $fields['photo'] = "profiles/default-icon.jpg";
+        $fields['mot_de_passe'] = $fields['password'];
+        $fields['password'] = bcrypt($fields['password']);
+        $fields['remember_token'] = Str::random(10);
 
-        if($request->file !== ''){
+        if(isset($request->file)){
             $parts = explode('@', $fields['email']);
             $name = strtolower($parts[0]);
-            $fields['photo'] = $this->upload_image($request->file,$name);
+            $fields['photo'] = $this->upload_image($request->file, $name);
         }
-
-        unset($fields['file']);
         
-        $user = User::create([
-            'nom' => $fields['nom'],
-            'prenom' =>  $fields['prenom'],
-            'cin' =>  $fields['cin'],
-            'telephone' =>  $fields['telephone'],
-            'photo' =>  $fields['photo'],
-            'email' =>  $fields['email'],
-            'password' =>  bcrypt($fields['password']),
-            'remember_token' =>  Str::random(10),
-            'adresse' => $fields['adresse'],
-            'type_user_id' => $fields['type_user_id'],
-        ]);
-
-        $token = $user->createToken('myapptoken')->plainTextToken;
-
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
+        $user = User::create($fields);
+        // $token = $user->createToken('myapptoken')->plainTextToken;
+        // $response = [
+        //     'user' => $user,
+        //     'token' => $token
+        // ];
         
-        return response($response, 201);
+        return $user;
     }
 
     public function login(Request $request)
@@ -90,19 +77,10 @@ class UserController extends Controller
         $user = User::where('email', $fields['email'])->first();
 
         if(!$user || !Hash::check($fields['password'], $user->password)){
-            return response([
-                'message' => 'Email ou mot de passe incorrect',
-            ], 401);
+            return null;
         }
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
-
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-        
-        return response($response, 201);
+        return $user;
     }
 
     public function logout(Request $request)
@@ -156,34 +134,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        // $file = $this->upload_image($request->file,"mldevopsy");
-        $allowed = ['nom','prenom','cin','telephone','email','password','adresse','file','type_user_id'];
-        $fields = array_filter(
-            $request->all(),
-            function ($key) use ($allowed) { 
-                return in_array($key, $allowed);
-            },
-            ARRAY_FILTER_USE_KEY
-        );
-
-        if(isset($fields['password'])){
-            $request->validate(['password' => 'required | string | confirmed']);
-            $fields['password'] = bcrypt($fields['password']);
-        }
-
-        if(isset($fields['file'])){
-            $parts = explode('@', $user->email);
-            $name = strtolower($parts[0]);
-            if($user->photo != "profiles/default-icon.jpg"){
-                $imagePath = public_path("storage/" . $user->photo);
-                if(File::exists($imagePath)) {
-                    File::delete($imagePath);
-                }
-            }
-            $fields['photo'] = $this->upload_image($fields['file'],$name);
-            unset($fields['file']);
-        }
-
+        $fields = $this->validateUpdate($request, $user);
         $user->update($fields);
         $response = [
             'user' => $user
@@ -198,8 +149,10 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        $user = User::findOrFail($id);
+        
         if($user->photo != "profiles/default-icon.jpg"){
             $imagePath = public_path("storage/" . $user->photo);
             if(File::exists($imagePath)) {
@@ -219,16 +172,6 @@ class UserController extends Controller
 
         return response($response, 201);
     }
-
-    // public function upload_img_if_an_url($url, $name)
-    // {
-    //     if($this->url_is_image($url)){
-    //         $contents = file_get_contents($url);
-    //         $ext = pathinfo($url, PATHINFO_EXTENSION);
-    //         $name = "public/profiles/".$name.".".$ext;
-    //         Storage::put($name, $contents);
-    //     }
-    // }
 
     private function upload_image($img, $name)
     {
@@ -255,6 +198,58 @@ class UserController extends Controller
             return (strpos($headers['Content-Type'], 'image/') !== false);
         }
         return false;
+    }
+    
+    private function validateUpdate($request, $user)
+    {
+        $allowed = ['nom','prenom','email','password','mot_de_passe','status','online','cin','telephone','photo','adresse','type_user_id'];
+        $fields = array_filter(
+            $request->all(),
+            function ($key) use ($allowed) { 
+                return in_array($key, $allowed);
+            },
+            ARRAY_FILTER_USE_KEY
+        );
+
+        if(isset($fields['file'])){
+            $parts = explode('@', $user->email);
+            $name = strtolower($parts[0]);
+            if($user->photo != "profiles/default-icon.jpg"){
+                $imagePath = public_path("storage/" . $user->photo);
+                if(File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
+            $fields['photo'] = $this->upload_image($fields['file'],$name);
+            unset($fields['file']);
+        }
+        if(isset($fields['nom'])){
+            $request->validate(['nom' => 'required | string'],$this->messages());
+        }
+        if(isset($fields['prenom'])){
+            $request->validate(['prenom' => 'nullable | string']);
+        }
+        if(isset($fields['cin'])){
+            $request->validate(['cin' => 'nullable | string']);
+        }
+        if(isset($fields['telephone'])){
+            $request->validate(['telephone' => 'nullable | string']);
+        }
+        if(isset($fields['adresse'])){
+            $request->validate(['adresse' => 'nullable | string']);
+        }
+        if(isset($fields['email'])){
+            $request->validate(['email' => 'required | email | string | unique:users,email,'. $user->id],$this->messages());
+        }
+        if(isset($fields['password'])){
+            $request->validate(['password' => 'required | string | confirmed'],$this->messages());
+            $fields['mot_de_passe'] = $fields['password'];
+            $fields['password'] = bcrypt($fields['password']);
+        }
+        if(isset($fields['type_user_id'])){
+            $request->validate(['type_user_id' => 'required | int | exists:type_users,id'],$this->messages());
+        }
+        return $fields;
     }
 
     private function messages()

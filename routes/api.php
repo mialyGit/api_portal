@@ -3,7 +3,12 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\GradeController;
+use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\FonctionController;
 use App\Http\Controllers\Api\TypeUserController;
+use App\Http\Controllers\Api\DirectionController;
+use App\Http\Controllers\Api\PersonnelController;
 use App\Http\Controllers\Api\PrivilegeController;
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\UserPrivilegeAppController;
@@ -18,18 +23,33 @@ use App\Http\Controllers\Api\UserPrivilegeAppController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('users/register', [UserController::class, 'register']);
-Route::post('users/login', [UserController::class, 'login']);
+Route::post('personnels/register', [PersonnelController::class, 'register']);
+Route::post('personnels/login', [PersonnelController::class, 'login']);
 
-Route::get('users', [UserController::class, 'index']);
-Route::get('users/{user}', [UserController::class, 'show']);
-Route::put('users/{user}', [UserController::class, 'update']);
-Route::delete('users/{user}', [UserController::class, 'destroy']);
-Route::delete('users_all', [UserController::class, 'destroy_all']);
+Route::get('personnels', [PersonnelController::class, 'index']);
+Route::get('personnels/{id}', [PersonnelController::class, 'show']);
+Route::put('personnels/{personnel}', [PersonnelController::class, 'update']);
+Route::delete('personnels/{personnel}', [PersonnelController::class, 'destroy']);
+Route::delete('personnels_all', [PersonnelController::class, 'destroy_all']);
 // Route::post('upload', [UserController::class, 'upload_img_url']);
+
+Route::resource('directions', DirectionController::class);
+Route::delete('directions_all', [DirectionController::class, 'destroy_all']);
+
+Route::resource('services', ServiceController::class);
+Route::get('search/services/{text}', [ServiceController::class, 'search']);
+Route::delete('services_all', [ServiceController::class, 'destroy_all']);
 
 Route::resource('applications', ApplicationController::class);
 Route::delete('applications_all', [ApplicationController::class, 'destroy_all']);
+
+Route::resource('fonctions', FonctionController::class);
+Route::delete('fonctions_all', [FonctionController::class, 'destroy_all']);
+
+Route::resource('grades', GradeController::class);
+Route::delete('grades_all', [GradeController::class, 'destroy_all']);
+// Route::resource('personnels', PersonnelController::class);
+// Route::delete('personnels_all', [PersonnelController::class, 'destroy_all']);
 
 Route::resource('privileges', PrivilegeController::class);
 Route::delete('privileges_all', [PrivilegeController::class, 'destroy_all']);

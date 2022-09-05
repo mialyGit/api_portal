@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('code_sc', 10)->nullable()->unique();
             $table->string('nom_sc', 100);
-            $table->string('abrev_sc', 20)->nullable();
+            $table->string('abrev_sc', 100)->nullable();
             $table->string('cur_bur_sc', 20)->nullable();
             $table->string('lieu_bur_sc', 100)->nullable();
             $table->string('adresse_sc')->nullable();

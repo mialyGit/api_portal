@@ -22,13 +22,14 @@ return new class extends Migration
                 'numero', 'date_delivrance', 'date_naissance', 'lieu_naissance', 'date_duplicata',
                 'lieu_duplicata', 'pere', 'mere'
             ]));
-            $table->json('cin_upload')->nullable();
+            $table->string('cin_upload')->nullable();
             $table->string('telephone',20)->nullable();
             $table->string('password');
             $table->string('photo')->nullable();
             $table->string('adresse');
-            $table->integer('status');
-            $table->boolean('online');
+            $table->integer('status')->default(0)
+                  ->comment('0: non validé; 1: validé');
+            $table->boolean('online')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

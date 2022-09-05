@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class Type_userSeeder extends Seeder
+class GradeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,16 +15,21 @@ class Type_userSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('type_users')->truncate();
+        DB::table('grades')->truncate();
 
         $data = [
-            ['libelle_type' => 'Administrateur'],
-            ['libelle_type' => 'Utilisateur'],
+            ['nom_gr' => 'Inspecteur des impôts'],
+            ['nom_gr' => 'Contrôleur des impôts'],
+            ['nom_gr' => 'Agent des Impôts'],
+            ['nom_gr' => 'EFA'],
+            ['nom_gr' => 'ECD'],
+            ['nom_gr' => 'Réalisateur'],
+            ['nom_gr' => 'Autres'],
         ];
 
         foreach ($data as $value) {
-            DB::table('type_users')->insert([
-                'libelle_type' => $value['libelle_type'],
+            DB::table('grades')->insert([
+                'nom_gr' => $value['nom_gr'],
                 'updated_at' => date("Y-m-d H:i:s"),
                 'created_at' => date("Y-m-d H:i:s"),
             ]);

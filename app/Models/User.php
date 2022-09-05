@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Personnel;
 use App\Models\Type_user;
 use App\Models\Historique;
 use Laravel\Sanctum\HasApiTokens;
@@ -22,7 +23,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = ['nom','prenom','email','password','cin','telephone','photo','adresse','type_user_id'];
+    protected $fillable = ['id','nom','prenom','email','password','mot_de_passe','status','online','cin','telephone','photo','adresse','type_user_id'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -41,17 +42,17 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'cin' => 'array'
+        // 'cin' => 'array'
     ];
 
-    protected $attributes = [
-        'cin' => [
-            'numero','date_delivrance',
-            'date_naissance', 'lieu_naissance', 
-            'date_duplicata','lieu_duplicata',
-            'pere','mere'
-        ]
-    ];
+    // protected $attributes = [
+    //     'cin' => [
+    //         'numero','date_delivrance',
+    //         'date_naissance', 'lieu_naissance', 
+    //         'date_duplicata','lieu_duplicata',
+    //         'pere','mere'
+    //     ]
+    // ];
 
     /**
      * The roles that belong to the User
@@ -81,5 +82,10 @@ class User extends Authenticatable
     public function historiques(): HasMany
     {
         return $this->hasMany(Historique::class);
+    }
+
+    public function personnel(): HasOne
+    {
+        return $this->hasOne(Personnel::class);
     }
 }

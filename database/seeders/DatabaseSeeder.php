@@ -17,8 +17,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DirectionSeeder::class,
             ServiceSeeder::class,
+            FonctionSeeder::class,
+            GradeSeeder::class,
             Type_userSeeder::class,
-            UserSeeder::class
+            UserSeeder::class,
+            PersonnelSeeder::class,
+            PrivilegeSeeder::class
        ]);
 
         // \App\Models\User::factory()->create([

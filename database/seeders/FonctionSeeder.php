@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class Type_userSeeder extends Seeder
+class FonctionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,16 +15,19 @@ class Type_userSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('type_users')->truncate();
+        DB::table('fonctions')->truncate();
 
         $data = [
-            ['libelle_type' => 'Administrateur'],
-            ['libelle_type' => 'Utilisateur'],
+            [
+                'nom_fn' => 'Développeur',
+                'service_id' => 2
+            ]
         ];
 
         foreach ($data as $value) {
-            DB::table('type_users')->insert([
-                'libelle_type' => $value['libelle_type'],
+            DB::table('fonctions')->insert([
+                'nom_fn' => $value['nom_fn'],
+                'service_id' => $value['service_id'],
                 'updated_at' => date("Y-m-d H:i:s"),
                 'created_at' => date("Y-m-d H:i:s"),
             ]);

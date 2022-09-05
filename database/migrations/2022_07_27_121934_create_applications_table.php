@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('code_app', 20);
             $table->string('nom_app', 100);
-            $table->string('abrev_app', 20)->nullable();
+            $table->string('abrev_app', 100)->nullable();
             $table->text('desc_app')->nullable();
             $table->text('lien_app')->default('http://www.impots.mg/');
-            $table->tinyInteger('type_app')->nullable()
+            $table->tinyInteger('type_app')->default(0)->nullable()
                   ->comment('0: application par défaut; 1: application de l\'utilisateur');
             $table->string('logo_app');
             $table->timestamps();

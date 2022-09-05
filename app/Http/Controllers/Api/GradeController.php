@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Privilege;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Grade;
+use Illuminate\Http\Request;
 
-class PrivilegeController extends Controller
+class GradeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +15,7 @@ class PrivilegeController extends Controller
      */
     public function index()
     {
-        return Privilege::get(['id','nom_privilege']);
+        return Grade::get(['id','nom_gr']);
     }
 
     /**
@@ -36,16 +36,16 @@ class PrivilegeController extends Controller
      */
     public function store(Request $request)
     {
-        return Privilege::create($request->all());
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Privilege  $privilege
+     * @param  \App\Models\Grade  $grade
      * @return \Illuminate\Http\Response
      */
-    public function show(Privilege $privilege)
+    public function show(Grade $grade)
     {
         //
     }
@@ -53,10 +53,10 @@ class PrivilegeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Privilege  $privilege
+     * @param  \App\Models\Grade  $grade
      * @return \Illuminate\Http\Response
      */
-    public function edit(Privilege $privilege)
+    public function edit(Grade $grade)
     {
         //
     }
@@ -65,10 +65,10 @@ class PrivilegeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Privilege  $privilege
+     * @param  \App\Models\Grade  $grade
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Privilege $privilege)
+    public function update(Request $request, Grade $grade)
     {
         //
     }
@@ -76,20 +76,11 @@ class PrivilegeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Privilege  $privilege
+     * @param  \App\Models\Grade  $grade
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Privilege $privilege)
+    public function destroy(Grade $grade)
     {
         //
-    }
-
-    public function destroy_all()
-    {
-        Privilege::truncate();
-        
-        $response = ['message' => 'Toute est bien supprimée'];
-
-        return response($response, 201);
     }
 }
