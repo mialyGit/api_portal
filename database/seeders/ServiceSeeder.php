@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ServiceSeeder extends Seeder
@@ -18,8 +19,8 @@ class ServiceSeeder extends Seeder
         // DB::statement('SET FOREIGN_KEY_CHECKS=0');
         DB::table('services')->truncate();
         // DB::statement('SET FOREIGN_KEY_CHECKS=1');
-
-        $data = json_decode(file_get_contents(storage_path() . "/app/json/direction.json"), true);
+        $data = json_decode(Storage::get('public/json/direction.json'), true);
+        //$data = json_decode(file_get_contents(storage_path() . "/app/json/direction.json"), true);
 
         foreach ($data as $row) {
             $abrev = $row['dir']['key'];
