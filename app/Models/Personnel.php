@@ -17,12 +17,14 @@ class Personnel extends Model
 
     public function fonction(): BelongsTo
     {
-        return $this->belongsTo(Fonction::class);
+        return $this->belongsTo(Fonction::class)
+        ->select(['id','nom_fn','service_id']);
     }
 
     public function grade(): BelongsTo
     {
-        return $this->belongsTo(Grade::class);
+        return $this->belongsTo(Grade::class)
+        ->select(['id','nom_gr']);
     }
 
     public function user(): BelongsTo

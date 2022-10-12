@@ -17,7 +17,8 @@ class Fonction extends Model
 
     public function service(): BelongsTo
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Service::class)
+        ->select(['id','nom_sc']);
     }
 
     public function personnels(): HasMany

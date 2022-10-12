@@ -82,7 +82,11 @@ class UserPrivilegeAppController extends Controller
 
         for ($i=0; $i < count($ints); $i++) { 
             $fields['privilege_id'] = $ints[$i];
-            $userPrivilegeApp = UserPrivilegeApp::create($fields);
+            $userPrivilegeApp = UserPrivilegeApp::where('user_id',$fields['user_id'])
+            ->where('application_id',$fields['application_id'])->where('privilege_id',$fields['privilege_id'])->first();
+            if($userPrivilegeApp == null){
+                $userPrivilegeApp = UserPrivilegeApp::create($fields);
+            }
             $response[] = $userPrivilegeApp;
         }
 

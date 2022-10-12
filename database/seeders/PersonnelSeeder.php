@@ -20,7 +20,7 @@ class PersonnelSeeder extends Seeder
         $data = [
             [
                 'num_matricule' => '202110',
-                'user_id' => 1,
+                'user_id' => 2,
                 'fonction_id' => 1,
                 'grade_id' => 1
             ]

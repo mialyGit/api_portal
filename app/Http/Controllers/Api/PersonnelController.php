@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Models\Personnel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -15,11 +16,11 @@ class PersonnelController extends Controller
     public function __construct(UserController $userController)
     {
         $this->userController = $userController;
-        $this->data =  Personnel::join('users', 'users.id', '=', 'personnels.user_id')
-        ->join('type_users', 'type_users.id', '=', 'users.type_user_id')
+        /*$this->data =  User::join('personnels', 'personnels.user_id', '=', 'users.id')
         ->join('fonctions', 'fonctions.id', '=', 'personnels.fonction_id')
         ->join('services', 'services.id', '=', 'fonctions.service_id')
-        ->join('grades', 'grades.id', '=', 'personnels.grade_id');
+        ->join('grades', 'grades.id', '=', 'personnels.grade_id');*/
+        $this->data = User::with('personnel','personnel.fonction','personnel.fonction.service','personnel.grade')->has('personnel');
     }
 
     /**
@@ -30,6 +31,7 @@ class PersonnelController extends Controller
     
     public function index()
     {
+        //return Personnel::all(); 
         return $this->data->get();
     }
 
@@ -49,7 +51,7 @@ class PersonnelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(Request $request)
+    public function store(Request $request)
     {
         $user = $this->userController->register($request);
 
@@ -64,27 +66,9 @@ class PersonnelController extends Controller
 
         // $token = $user->createToken('myapptoken')->plainTextToken;
         $response = [
-            'user' => $this->data->where('personnels.user_id', '=', $user->id)->first()
+            'user' => $this->data->where('users.id', '=', $user->id)->first()
         ];
 
-        return response($response, 201);
-    }
-
-    public function login(Request $request)
-    {
-        $user = $this->userController->login($request);
-        if($user == null) {
-            return response([
-                'message' => 'Email ou mot de passe incorrect',
-            ], 401);
-        }
-
-        $token = $user->createToken('myapptoken')->plainTextToken;
-        $response = [
-            'user' => $this->data->where('personnels.user_id', '=', $user->id)->first(),
-            'token' => $token
-        ];
-        
         return response($response, 201);
     }
 
@@ -96,7 +80,7 @@ class PersonnelController extends Controller
      */
     public function show($id)
     {
-        return $this->data->where('personnels.id', '=', $id)->first();
+        return $this->data->where('users.id', '=', $id)->first();
     }
 
     /**

@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Api;
 // use Storage;
 use App\Models\User;
 // use App\Http\Requests\StoreUserRequest;
+use App\Models\Personnel;
 use Illuminate\Support\Str;
+use App\Models\Contribuable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -20,11 +23,37 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
+    {   
+        return User::all(); 
+        //return User::with('personnel','personnel.fonction','personnel.fonction.service','personnel.grade')->get();
+    }
+
+    public function show_except($id)
     {
-        // $users = User::with('type_user:id,libelle_type')->get();
-        // // return UserResource::collection($users);
-        // return $users;
-        return User::all()->load('type_user'); 
+        return User::where('users.id', '!=', $id)
+        ->select('id','nom','prenom','photo')
+        ->withCount('unreadMessage')
+        ->with('lastMessage')->get();
+    }
+
+    public function validate_status(User $user)
+    {
+        $user->update(['status'=>1]);
+        $response = [
+            'user' => $user
+        ];
+        
+        return response($response, 201);
+    }
+
+    public function unvalidate_status(User $user)
+    {
+        $user->update(['status'=> 0]);
+        $response = [
+            'user' => $user
+        ];
+        
+        return response($response, 201);
     }
 
      /**
@@ -33,7 +62,10 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(Request $request)
+
+    
+
+    public function store(Request $request)
     {
         $fields = $request->validate([
             'nom' => 'required | string',
@@ -43,7 +75,7 @@ class UserController extends Controller
             'email' => 'required | email | string | unique:users,email',
             'password' => 'required | string | confirmed',
             'adresse' => 'nullable | string',
-            'type_user_id' => 'required | int | exists:type_users,id',
+            'type_user_id' => 'required | int ',
         ], $this->messages());
 
         $fields['photo'] = "profiles/default-icon.jpg";
@@ -57,13 +89,7 @@ class UserController extends Controller
             $fields['photo'] = $this->upload_image($request->file, $name);
         }
         
-        $user = User::create($fields);
-        // $token = $user->createToken('myapptoken')->plainTextToken;
-        // $response = [
-        //     'user' => $user,
-        //     'token' => $token
-        // ];
-        
+        $user = User::create($fields);        
         return $user;
     }
 
@@ -77,15 +103,42 @@ class UserController extends Controller
         $user = User::where('email', $fields['email'])->first();
 
         if(!$user || !Hash::check($fields['password'], $user->password)){
-            return null;
+            return response([
+                'message' => 'Email ou mot de passe incorrect',
+            ], 401);
         }
 
-        return $user;
+        if($user->status == 0){
+            return response([
+                'message' => 'Votre compte n\'est pas activé, vous devez faire une demande d\'activation',
+            ], 401);
+        }
+        
+        /** Tester si l'utilisateur un personnel ou contribuable */
+        $personnel = Personnel::where('user_id', $user->id)->first();
+        $contribuable = Contribuable::where('user_id', $user->id)->first();
+
+        if($personnel != null){
+            $data = User::with('personnel','personnel.fonction','personnel.fonction.service','personnel.grade');
+        } else if($contribuable != null){
+            $data = User::with('contribuable');
+        } else {
+            $data = DB::table('users');
+        }
+        /** -------------------------------------------------------- */
+        
+        $token = $user->createToken('myapptoken')->plainTextToken;
+        $response = [
+            'user' => $data->where('users.id', '=', $user->id)->first(),
+            'token' => $token
+        ];
+        
+        return response($response, 201);
     }
 
     public function logout(Request $request)
     {
-        auth()->user()->tokens()->delete();
+        //auth()->user()->tokens()->delete();
 
         return [
             'message' => 'Déconnectée'
@@ -111,7 +164,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $user->type_user;
+        return $user;
     }
 
     /**
@@ -247,7 +300,7 @@ class UserController extends Controller
             $fields['password'] = bcrypt($fields['password']);
         }
         if(isset($fields['type_user_id'])){
-            $request->validate(['type_user_id' => 'required | int | exists:type_users,id'],$this->messages());
+            $request->validate(['type_user_id' => 'required | int '],$this->messages());
         }
         return $fields;
     }
@@ -262,7 +315,6 @@ class UserController extends Controller
             'email.unique'      => 'Cette email est déjà dans la base, veuillez essayer une autre',
             'password.confirmed' => 'Veuillez confirmer le mot de passe',
             'type_user_id.required'      => 'Veuillez entrer le type d\'utilisateur',
-            'type_user_id.exists'      => 'Cette type d\'utilisateur est introuvable',
         ];
     }
 }

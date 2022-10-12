@@ -18,6 +18,8 @@ return new class extends Migration
             $table->bigInteger('sender_id');
             $table->bigInteger('rec_id');
             $table->text('content');
+            $table->boolean('status')->default(false)
+                ->comment('true: Déjà vue; false: Pas encore vue');
             $table->timestamps();
             
             $table->foreign('sender_id')->nullable()->references('id')->on('users');

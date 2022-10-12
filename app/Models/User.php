@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Message;
+// use App\Models\Type_user;
+use App\Models\Fonction;
 use App\Models\Personnel;
-use App\Models\Type_user;
 use App\Models\Historique;
+use App\Models\Contribuable;
 use Laravel\Sanctum\HasApiTokens;
+// use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -69,10 +73,10 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function type_user(): BelongsTo
+    /*public function type_user(): BelongsTo
     {
         return $this->belongsTo(Type_user::class);
-    }
+    }*/
 
     /**
      * Get all of the historiques for the User
@@ -84,8 +88,42 @@ class User extends Authenticatable
         return $this->hasMany(Historique::class);
     }
 
+    public function senderMessage(): HasMany
+    {
+        return $this->hasMany(Message::class,'sender_id');
+    }
+
+    public function receiverMessage(): HasMany
+    {
+        return $this->hasMany(Message::class,'rec_id');
+    }
+
+    public function unreadMessage()
+    {
+        return $this->hasMany(Message::class,'sender_id')->whereStatus(false);
+    }
+
+    public function lastMessage()
+    {
+        return $this->hasOne(Message::class,'sender_id')->latest();
+    }
+
     public function personnel(): HasOne
     {
-        return $this->hasOne(Personnel::class);
+        return $this->hasOne(Personnel::class)
+        ->select(['id','user_id','num_matricule','fonction_id','grade_id']);
+    }
+
+    public function contribuable(): HasOne
+    {
+        return $this->hasOne(Contribuable::class)
+        ->select(['id','user_id','nif','raison_sociale','s_matrim','activite','type_contr','localisation']);
+    }
+
+    public function message()
+    {
+        return Message::where('rec_id',  $this->id)
+        ->where('status',  false)
+        ->get();
     }
 }

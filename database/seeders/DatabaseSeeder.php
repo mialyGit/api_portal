@@ -19,10 +19,12 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             FonctionSeeder::class,
             GradeSeeder::class,
-            Type_userSeeder::class,
+            // Type_userSeeder::class,
             UserSeeder::class,
             PersonnelSeeder::class,
-            PrivilegeSeeder::class
+            ContribuableSeeder::class,
+            PrivilegeSeeder::class,
+            ApplicationSeeder::class
        ]);
 
         // \App\Models\User::factory()->create([
