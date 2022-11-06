@@ -11,7 +11,7 @@ class Historique extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id', 'action'];
+    protected $fillable = ['id', 'action', 'user_id'];
 
     /**
      * Get the user that owns the Historique
@@ -20,6 +20,7 @@ class Historique extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)
+        ->select(['id','nom','prenom','telephone','photo','adresse','email']);
     }
 }

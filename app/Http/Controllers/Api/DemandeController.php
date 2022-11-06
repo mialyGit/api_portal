@@ -22,13 +22,16 @@ class DemandeController extends Controller
 
     public function demande_pers(Request $request)
     {
-        $personnel = Personnel::where('num_matricule', $request->num_matricule)->first();
+        $personnel = Personnel::where('num_matricule', $request->nif)->first();
         if($personnel != null){
             $demande = Demande::where('user_id', $personnel->user_id)->first();
             if(!$demande){
-                return Demande::create([
+                Demande::create([
                     'user_id' => $personnel->user_id,
                 ]);
+                return response([
+                    'message' => 'Demande envoyé avec succès',
+                ], 201);
             } else {
                 return response([
                     'message' => 'Demande déjà envoyé',
@@ -37,6 +40,7 @@ class DemandeController extends Controller
         } else {
             return response([
                 'message' => 'Numéro matricule invalide!',
+                'personnel' => $personnel
             ], 401);
         }
     }
@@ -47,9 +51,12 @@ class DemandeController extends Controller
         if($contribuable != null){
             $demande = Demande::where('user_id', $contribuable->user_id)->first();
             if(!$demande){
-                return Demande::create([
+                Demande::create([
                     'user_id' => $contribuable->user_id,
                 ]);
+                return response([
+                    'message' => 'Demande envoyé avec succès',
+                ], 201);
             } else {
                 return response([
                     'message' => 'Demande déjà envoyé',

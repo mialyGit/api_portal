@@ -103,11 +103,16 @@ class User extends Authenticatable
         return $this->hasMany(Message::class,'sender_id')->whereStatus(false);
     }
 
-    public function lastMessage()
+    public function lastSendMessage()
     {
         return $this->hasOne(Message::class,'sender_id')->latest();
     }
 
+    public function lastRecMessage()
+    {
+        return $this->hasOne(Message::class,'rec_id')->latest();
+    }
+    
     public function personnel(): HasOne
     {
         return $this->hasOne(Personnel::class)

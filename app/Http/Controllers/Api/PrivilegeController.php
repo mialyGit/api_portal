@@ -36,7 +36,12 @@ class PrivilegeController extends Controller
      */
     public function store(Request $request)
     {
-        return Privilege::create($request->all());
+        $privilege = Privilege::create($request->all());
+        $response = [
+            'message' => 'Privilège ajouté avec succès',
+            'privilege' => $privilege
+        ];
+        return response($response, 201);
     }
 
     /**
@@ -70,7 +75,12 @@ class PrivilegeController extends Controller
      */
     public function update(Request $request, Privilege $privilege)
     {
-        //
+        $privilege->update($request->all());
+        $response = [
+            'message' => 'Privilège modifié avec succès',
+            'privilege' => $privilege
+        ];
+        return response($response, 201);
     }
 
     /**
@@ -81,7 +91,9 @@ class PrivilegeController extends Controller
      */
     public function destroy(Privilege $privilege)
     {
-        //
+        $privilege->delete();
+        $response = ['message' => 'Privilège supprimée de la base de données'];
+        return response($response,201);
     }
 
     public function destroy_all()

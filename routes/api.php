@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\TypeUserController;
 use App\Http\Controllers\Api\DirectionController;
 use App\Http\Controllers\Api\PersonnelController;
 use App\Http\Controllers\Api\PrivilegeController;
+use App\Http\Controllers\Api\HistoriqueController;
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\ContribuableController;
 use App\Http\Controllers\Api\UserPrivilegeAppController;
@@ -33,6 +34,7 @@ Route::get('users/validate/{user}', [UserController::class, 'validate_status']);
 Route::get('users/unvalidate/{user}', [UserController::class, 'unvalidate_status']);
 
 Route::get('users/demandes', [DemandeController::class, 'index']);
+Route::get('users/historiques', [HistoriqueController::class, 'index']);
 Route::post('users/activate/pers', [DemandeController::class, 'demande_pers']);
 Route::post('users/activate/cont', [DemandeController::class, 'demande_cont']);
 Route::post('users/logout', [UserController::class, 'logout']);
@@ -46,14 +48,15 @@ Route::delete('personnels/{personnel}', [PersonnelController::class, 'destroy'])
 Route::delete('personnels_all', [PersonnelController::class, 'destroy_all']);
 
 
-Route::get('friends/{id}', [UserController::class, 'show_except']);
+Route::get('friends/{id}', [UserController::class, 'show_except2']);
 // Route::post('upload', [UserController::class, 'upload_img_url']);
 
 Route::resource('directions', DirectionController::class);
 Route::delete('directions_all', [DirectionController::class, 'destroy_all']);
 
 Route::resource('services', ServiceController::class);
-Route::get('search/services/{text}', [ServiceController::class, 'search']);
+Route::get('search/services', [ServiceController::class, 'index2']);
+//Route::get('search/services/{text}', [ServiceController::class, 'search']);
 Route::delete('services_all', [ServiceController::class, 'destroy_all']);
 
 Route::resource('applications', ApplicationController::class);
@@ -76,6 +79,9 @@ Route::delete('contribuables_all', [ContribuableController::class, 'destroy_all'
 Route::resource('demandes', DemandeController::class);
 Route::delete('demandes_all', [DemandeController::class, 'destroy_all']);
 
+Route::resource('historiques', HistoriqueController::class);
+Route::delete('historiques_all', [HistoriqueController::class, 'destroy_all']);
+
 Route::resource('user_privilege_apps', UserPrivilegeAppController::class);
 Route::delete('user_privilege_apps_all', [UserPrivilegeAppController::class, 'destroy_all']);
 
@@ -85,6 +91,7 @@ Route::get('messages/{message}', [MessageController::class, 'show']);
 Route::delete('messages/{message}', [MessageController::class, 'destroy']);
 Route::delete('messages_all', [MessageController::class, 'destroy_all']);
 Route::get('messages/{sender_id}/{rec_id}', [MessageController::class, 'conversations']);
+Route::get('messages_seen/{sender_id}/{rec_id}', [MessageController::class, 'seen']);
 
 // Route::resource('type_users', TypeUserController::class);
 // Route::delete('type_users_all', [TypeUserController::class, 'destroy_all']);

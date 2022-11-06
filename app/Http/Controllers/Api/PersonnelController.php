@@ -53,7 +53,7 @@ class PersonnelController extends Controller
      */
     public function store(Request $request)
     {
-        $user = $this->userController->register($request);
+        $user = $this->userController->store($request);
 
         $fields = $request->validate([
             'num_matricule' => 'required | string',

@@ -47,6 +47,18 @@ class MessageController extends Controller
         ->get();
     }
 
+    public function seen($sender_id, $rec_id)
+    {
+        $message = Message::where('rec_id',$rec_id)->where('sender_id',  $sender_id);
+        $message->update(['status' => true]);
+        $response = [
+            'message' => $message
+        ];
+        
+        return response($response, 201);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      *

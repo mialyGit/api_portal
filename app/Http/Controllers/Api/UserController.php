@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 // use Storage;
 use App\Models\User;
 // use App\Http\Requests\StoreUserRequest;
+use App\Models\Message;
 use App\Models\Personnel;
 use Illuminate\Support\Str;
 use App\Models\Contribuable;
@@ -33,7 +34,30 @@ class UserController extends Controller
         return User::where('users.id', '!=', $id)
         ->select('id','nom','prenom','photo')
         ->withCount('unreadMessage')
-        ->with('lastMessage')->get();
+        ->with('lastSendMessage')
+        ->with('lastRecMessage')
+        ->get();
+    }
+
+    public function show_except2($id)
+    {
+        $users = User::where('users.id', '!=', $id)
+        ->select('id','nom','prenom','photo')
+        ->withCount('unreadMessage')
+        ->get();
+
+        for ($i=0; $i < count($users); $i++) { 
+           $message = Message::query()
+           ->where('sender_id',  $id)
+           ->where('rec_id',  $users[$i]->id)
+           ->orWhere('sender_id',  $users[$i]->id)
+           ->where('rec_id',  $id)
+           ->latest('created_at')->first();
+           $users[$i]->last_message = $message;
+        }
+
+        return $users;
+
     }
 
     public function validate_status(User $user)

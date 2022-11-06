@@ -13,7 +13,7 @@ class Service extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id','code_sc','nom_fn','abrev_sc','cur_bur_sc','lieu_bur_sc','adresse_sc','mail_sc','tel_2_sc','direction_id'];
+    protected $fillable = ['id','code_sc','nom_sc','abrev_sc','cur_bur_sc','lieu_bur_sc','adresse_sc','mail_sc','tel_2_sc','direction_id'];
 
     public function direction(): BelongsTo
     {

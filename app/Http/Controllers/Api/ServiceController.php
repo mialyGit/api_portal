@@ -15,6 +15,11 @@ class ServiceController extends Controller
      */
     public function index()
     {
+        return Service::all();
+    }
+
+    public function index2()
+    {
         return Service::get(['id','nom_sc','lieu_bur_sc']);
     }
 
@@ -42,7 +47,12 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $service = Service::create($request->all());
+        $response = [
+            'message' => 'Service ajouté avec succès',
+            'service' => $service
+        ];
+        return response($response, 201);
     }
 
     /**
@@ -76,7 +86,12 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service)
     {
-        //
+        $service->update($request->all());
+        $response = [
+            'message' => 'Service modifié avec succès',
+            'service' => $service
+        ];
+        return response($response, 201);
     }
 
     /**
@@ -87,7 +102,9 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service)
     {
-        //
+        $service->delete();
+        $response = ['message' => 'Service supprimée de la base de données'];
+        return response($response,201);
     }
 
     public function destroy_all()

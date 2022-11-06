@@ -39,7 +39,12 @@ class FonctionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $fonction = Fonction::create($request->all());
+        $response = [
+            'message' => 'Fonction ajoutée avec succèes',
+            'fonction' => $fonction
+        ];
+        return response($response, 201);
     }
 
     /**
@@ -73,7 +78,12 @@ class FonctionController extends Controller
      */
     public function update(Request $request, Fonction $fonction)
     {
-        //
+        $fonction->update($request->all());
+        $response = [
+            'message' => 'Fonction modifiée avec succèes',
+            'fonction' => $fonction
+        ];
+        return response($response, 201);
     }
 
     /**
@@ -84,6 +94,8 @@ class FonctionController extends Controller
      */
     public function destroy(Fonction $fonction)
     {
-        //
+        $fonction->delete();
+        $response = ['message' => 'Fonction supprimée de la base de données'];
+        return response($response,201);
     }
 }
