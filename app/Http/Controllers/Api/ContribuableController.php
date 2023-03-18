@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
-use App\Http\Controllers\Controller;
+use App\Models\Historique;
 use App\Models\Contribuable;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\UserController;
 
 class ContribuableController extends Controller
@@ -16,7 +17,7 @@ class ContribuableController extends Controller
     public function __construct(UserController $userController)
     {
         $this->userController = $userController;
-        $this->data = User::with('contribuable')->has('contribuable');
+        $this->data = User::with('contribuable')->has('contribuable')->orderBy('created_at', 'DESC');
     }
 
     /**
@@ -61,7 +62,14 @@ class ContribuableController extends Controller
 
         $fields['user_id'] = $user->id;
         $contribuable = Contribuable::create($fields);
-
+        
+        if(isset($request->maker_id)){
+            Historique::create([
+                'action' => "Ajout d'un contribuable $user->nom",
+                'user_id' => $request->maker_id
+            ]);
+        }
+        
         // $token = $user->createToken('myapptoken')->plainTextToken;
         $response = [
             'user' => $this->data->where('users.id', '=', $user->id)->first()

@@ -20,7 +20,7 @@ class PersonnelController extends Controller
         ->join('fonctions', 'fonctions.id', '=', 'personnels.fonction_id')
         ->join('services', 'services.id', '=', 'fonctions.service_id')
         ->join('grades', 'grades.id', '=', 'personnels.grade_id');*/
-        $this->data = User::with('personnel','personnel.fonction','personnel.fonction.service','personnel.grade')->has('personnel');
+        $this->data = User::with('personnel','personnel.fonction','personnel.fonction.service','personnel.grade')->has('personnel')->orderBy('created_at', 'DESC');
     }
 
     /**

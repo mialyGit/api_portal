@@ -15,7 +15,7 @@ class HistoriqueController extends Controller
      */
     public function index()
     {
-        return Historique::with('user')->get()->sortBy('created_at');
+        return Historique::with('user')->orderBy('created_at', 'DESC')->get();
     }
 
     /**

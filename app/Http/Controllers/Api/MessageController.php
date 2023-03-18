@@ -134,7 +134,15 @@ class MessageController extends Controller
         $message->delete();
         $response = ['message' => 'Message supprimée de la base de données'];
         return response($response,201);
+    }
 
+    public function destroy_all()
+    {
+        Message::truncate();
+        
+        $response = ['message' => 'Toute est bien supprimée'];
+
+        return response($response, 201);
     }
 
     private function messages()

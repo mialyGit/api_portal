@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\UserPrivilegeAppController;
 */
 
 Route::get('users', [UserController::class, 'index']);
+Route::put('uusers/{user}', [UserController::class, 'update']);
 Route::post('users/login', [UserController::class, 'login']);
 Route::get('users/validate/{user}', [UserController::class, 'validate_status']);
 Route::get('users/unvalidate/{user}', [UserController::class, 'unvalidate_status']);
@@ -83,6 +84,7 @@ Route::resource('historiques', HistoriqueController::class);
 Route::delete('historiques_all', [HistoriqueController::class, 'destroy_all']);
 
 Route::resource('user_privilege_apps', UserPrivilegeAppController::class);
+Route::post('update_user_privilege_apps', [UserPrivilegeAppController::class, 'store2']);
 Route::delete('user_privilege_apps_all', [UserPrivilegeAppController::class, 'destroy_all']);
 
 Route::get('messages', [MessageController::class, 'index']);

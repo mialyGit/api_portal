@@ -17,7 +17,7 @@ class DemandeController extends Controller
      */
     public function index()
     {
-        return Demande::with('user')->get();
+        return Demande::with('user')->orderBy('created_at', 'DESC')->get();
     }
 
     public function demande_pers(Request $request)

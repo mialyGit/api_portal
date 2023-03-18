@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\UserPrivilegeApp;
+use App\Models\User;
+use App\Models\Historique;
 use Illuminate\Http\Request;
+use App\Models\UserPrivilegeApp;
+use App\Http\Controllers\Controller;
 
 class UserPrivilegeAppController extends Controller
 {
@@ -90,6 +92,48 @@ class UserPrivilegeAppController extends Controller
             $response[] = $userPrivilegeApp;
         }
 
+        if(isset($request->maker_id)){
+            $user = User::where('id', $fields['user_id'])->first();
+            Historique::create([
+                'action' => "Assigné des privilèges à $user->nom",
+                'user_id' => $request->maker_id
+            ]);
+        }
+
+        return response($response, 201);
+    }
+
+    public function store2(Request $request)
+    {
+        $fields = $request->validate([
+            'user_id' => 'required | int | exists:users,id',
+            'application_id' => 'required | int | exists:applications,id',
+        ]);
+
+        $userPrivilegeApp = UserPrivilegeApp::where('user_id',$fields['user_id'])
+            ->where('application_id',$fields['application_id']);
+        $userPrivilegeApp->delete();
+        $response = [];
+        
+        if($request->privilege_id != ""){
+            $ints = array_map('intval', explode(',', $request->privilege_id ));
+
+            for ($i=0; $i < count($ints); $i++) { 
+                $fields['privilege_id'] = $ints[$i];
+                $userPrivilegeApp = UserPrivilegeApp::create($fields);
+                
+                $response[] = $userPrivilegeApp;
+            }
+    
+            if(isset($request->maker_id)){
+                $user = User::where('id', $fields['user_id'])->first();
+                Historique::create([
+                    'action' => "Modifié des privilèges à $user->nom",
+                    'user_id' => $request->maker_id
+                ]);
+            }
+        }
+        
         return response($response, 201);
     }
 
@@ -102,7 +146,7 @@ class UserPrivilegeAppController extends Controller
     public function show($user_id)
     {
         $response = array();
-        $users = $this->data->where('user_id', $user_id)->get(['code_app','desc_app','logo_app','nom_app','nom_privilege']);
+        $users = $this->data->where('user_id', $user_id)->get(['application_id','code_app','user_id','nom','prenom','desc_app','logo_app','nom_app','nom_privilege']);
         $response = $this->group_by('code_app', 'nom_privilege', $users);
         return $response;
     }
@@ -125,9 +169,41 @@ class UserPrivilegeAppController extends Controller
      * @param  \App\Models\UserPrivilegeApp  $userPrivilegeApp
      * @return \Illuminate\Http\Response
      */
+
+    
+
     public function update(Request $request, UserPrivilegeApp $userPrivilegeApp)
     {
-        //
+        $fields = $request->validate([
+            'user_id' => 'required | int | exists:users,id',
+            'application_id' => 'required | int | exists:applications,id',
+        ]);
+
+        $p = $request->validate(['privilege_id' => 'required | string ']);
+        
+        $ints = array_map('intval', explode(',', $p['privilege_id'] ));
+
+        $response = [];
+
+        for ($i=0; $i < count($ints); $i++) { 
+            $fields['privilege_id'] = $ints[$i];
+            $userPrivilegeApp = UserPrivilegeApp::where('user_id',$fields['user_id'])
+            ->where('application_id',$fields['application_id'])->where('privilege_id',$fields['privilege_id'])->first();
+            if($userPrivilegeApp == null){
+                $userPrivilegeApp = UserPrivilegeApp::create($fields);
+            }
+            $response[] = $userPrivilegeApp;
+        }
+
+        if(isset($request->maker_id)){
+            $user = User::where('id', $fields['user_id'])->first();
+            Historique::create([
+                'action' => "Modifié des privilèges à $user->nom",
+                'user_id' => $request->maker_id
+            ]);
+        }
+
+        return response($response, 201);
     }
 
     /**

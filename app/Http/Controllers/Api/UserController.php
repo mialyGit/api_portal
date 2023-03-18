@@ -7,6 +7,7 @@ use App\Models\User;
 // use App\Http\Requests\StoreUserRequest;
 use App\Models\Message;
 use App\Models\Personnel;
+use App\Models\Historique;
 use Illuminate\Support\Str;
 use App\Models\Contribuable;
 use Illuminate\Http\Request;
@@ -149,6 +150,13 @@ class UserController extends Controller
         } else {
             $data = DB::table('users');
         }
+
+        if($user->type_user_id != 1){
+            Historique::create([
+                'action' => 'Connexion au portail',
+                'user_id' => $user->id
+            ]);
+        }
         /** -------------------------------------------------------- */
         
         $token = $user->createToken('myapptoken')->plainTextToken;
@@ -213,6 +221,14 @@ class UserController extends Controller
     {
         $fields = $this->validateUpdate($request, $user);
         $user->update($fields);
+
+        if($user->type_user_id != 1){
+            Historique::create([
+                'action' => "Modifié son profile",
+                'user_id' => $user->id
+            ]);
+        }
+        
         $response = [
             'user' => $user
         ];

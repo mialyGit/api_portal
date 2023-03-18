@@ -16,7 +16,7 @@ class ApplicationController extends Controller
      */
     public function index()
     {
-        $applications = Application::all();
+        $applications = Application::orderBy('created_at', 'DESC')->get();
         return $applications;
     }
 

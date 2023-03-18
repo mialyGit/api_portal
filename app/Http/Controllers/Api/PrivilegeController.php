@@ -15,7 +15,7 @@ class PrivilegeController extends Controller
      */
     public function index()
     {
-        return Privilege::get(['id','nom_privilege']);
+        return Privilege::orderBy('created_at', 'DESC')->get(['id','nom_privilege']);
     }
 
     /**
